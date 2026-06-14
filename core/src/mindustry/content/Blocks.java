@@ -719,58 +719,58 @@ public class Blocks{
             sclMax = 100f;
         }};
 
-        boulder = new Prop("boulder"){{
+        boulder = new StaticProp("boulder"){{
             variants = 2;
             stone.asFloor().decoration = craters.asFloor().decoration = charr.asFloor().decoration = this;
         }};
 
-        snowBoulder = new Prop("snow-boulder"){{
+        snowBoulder = new StaticProp("snow-boulder"){{
             variants = 2;
             snow.asFloor().decoration = ice.asFloor().decoration = iceSnow.asFloor().decoration = salt.asFloor().decoration = this;
         }};
 
-        shaleBoulder = new Prop("shale-boulder"){{
+        shaleBoulder = new StaticProp("shale-boulder"){{
             variants = 2;
             shale.asFloor().decoration = this;
         }};
 
-        sandBoulder = new Prop("sand-boulder"){{
+        sandBoulder = new StaticProp("sand-boulder"){{
             variants = 2;
             sand.asFloor().decoration = this;
         }};
 
-        daciteBoulder = new Prop("dacite-boulder"){{
+        daciteBoulder = new StaticProp("dacite-boulder"){{
             variants = 2;
             dacite.asFloor().decoration = this;
         }};
 
-        basaltBoulder = new Prop("basalt-boulder"){{
+        basaltBoulder = new StaticProp("basalt-boulder"){{
             variants = 2;
             basalt.asFloor().decoration = hotrock.asFloor().decoration = darksand.asFloor().decoration = magmarock.asFloor().decoration = this;
         }};
 
-        carbonBoulder = new Prop("carbon-boulder"){{
+        carbonBoulder = new StaticProp("carbon-boulder"){{
             variants = 2;
             carbonStone.asFloor().decoration = this;
         }};
 
-        ferricBoulder = new Prop("ferric-boulder"){{
+        ferricBoulder = new StaticProp("ferric-boulder"){{
             variants = 2;
             ferricStone.asFloor().decoration = ferricCraters.asFloor().decoration = this;
         }};
 
-        beryllicBoulder = new Prop("beryllic-boulder"){{
+        beryllicBoulder = new StaticProp("beryllic-boulder"){{
             variants = 2;
             beryllicStone.asFloor().decoration = this;
         }};
 
-        yellowStoneBoulder = new Prop("yellow-stone-boulder"){{
+        yellowStoneBoulder = new StaticProp("yellow-stone-boulder"){{
             variants = 2;
             yellowStone.asFloor().decoration = regolith.asFloor().decoration = yellowStonePlates.asFloor().decoration = this;
         }};
 
         //1px outline + 4.50 gaussian shadow in gimp
-        arkyicBoulder = new Prop("arkyic-boulder"){{
+        arkyicBoulder = new StaticProp("arkyic-boulder"){{
             variants = 3;
             customShadow = true;
             arkyicStone.asFloor().decoration = this;
@@ -2091,7 +2091,7 @@ public class Blocks{
             requirements(Category.distribution, with(Items.copper, 1, Items.lead, 1, Items.titanium, 1));
             health = 65;
             speed = 0.08f;
-            displayedSpeed = 11f;
+            displayedSpeed = 10f;
         }};
 
         plastaniumConveyor = new StackConveyor("plastanium-conveyor"){{
@@ -4850,7 +4850,7 @@ public class Blocks{
         }};
 
         disperse = new ItemTurret("disperse"){{
-            requirements(Category.turret, with(Items.thorium, 50, Items.oxide, 150, Items.silicon, 200, Items.beryllium, 350));
+            requirements(Category.turret, with(Items.thorium, 50, Items.oxide, 50, Items.silicon, 200, Items.beryllium, 350));
 
             ammo(
             Items.tungsten, new BasicBulletType(){{
@@ -5067,7 +5067,7 @@ public class Blocks{
                 despawnEffect = hitEffect = new ExplosionEffect(){{
                     waveColor = Pal.surge;
                     smokeColor = Color.gray;
-                    sparkColor = Pal.sap;
+                    sparkColor = Pal.surge;
                     waveStroke = 4f;
                     waveRad = 40f;
                 }};
@@ -5592,6 +5592,47 @@ public class Blocks{
 
                     moves.add(new PartMove(PartProgress.warmup.inv(), 0f, -4f, 0f));
                 }});
+                setAmmoParts(
+                    Items.carbide, Seq.with(new RegionPart("-missile"){{
+                        progress = PartProgress.reload.curve(Interp.pow2In);
+
+                        colorTo = new Color(1f, 1f, 1f, 0f);
+                        color = Color.white;
+                        mixColorTo = Pal.accent;
+                        mixColor = new Color(1f, 1f, 1f, 0f);
+                        outline = false;
+                        under = true;
+                        layerOffset = -0.01f;
+
+                        moves.add(new PartMove(PartProgress.warmup.inv(), 0f, -4f, 0f));
+                    }}),
+                    Items.phaseFabric, Seq.with(new RegionPart("-missile-phase"){{
+                        progress = PartProgress.reload.curve(Interp.pow2In);
+
+                        colorTo = new Color(1f, 1f, 1f, 0f);
+                        color = Color.white;
+                        mixColorTo = Pal.accent;
+                        mixColor = new Color(1f, 1f, 1f, 0f);
+                        outline = false;
+                        under = true;
+                        layerOffset = -0.01f;
+
+                        moves.add(new PartMove(PartProgress.warmup.inv(), 0f, -4f, 0f));
+                    }}),
+                    Items.surgeAlloy, Seq.with(new RegionPart("-missile-surge"){{
+                        progress = PartProgress.reload.curve(Interp.pow2In);
+
+                        colorTo = new Color(1f, 1f, 1f, 0f);
+                        color = Color.white;
+                        mixColorTo = Pal.accent;
+                        mixColor = new Color(1f, 1f, 1f, 0f);
+                        outline = false;
+                        under = true;
+                        layerOffset = -0.01f;
+
+                        moves.add(new PartMove(PartProgress.warmup.inv(), 0f, -4f, 0f));
+                    }})
+                );
             }};
 
             recoil = 0.5f;

@@ -103,11 +103,12 @@ public class Logic implements ApplicationListener{
 
             if(state.isCampaign()){
                 //enable building AI on campaign unless the preset disables it
-
                 state.rules.coreIncinerates = true;
                 state.rules.infiniteResources = false;
                 state.rules.allowEditRules = false;
                 state.rules.allowEditWorldProcessors = false;
+                state.rules.worldProcessorPlayerLink = false;
+
                 if(state.getPlanet().enemyInfiniteItems){
                     state.rules.waveTeam.rules().infiniteResources = true;
                     state.rules.waveTeam.rules().fillItems = true;
@@ -296,17 +297,17 @@ public class Logic implements ApplicationListener{
     }
 
     public void reset(){
-        State prev = state.getState();
-        state.patcher.unapply();
-        //recreate gamestate - sets state to menu
-        state = new GameState();
-        //fire change event, since it was technically changed
-        Events.fire(new StateChangeEvent(prev, State.menu));
-
         Groups.clear();
         Time.clear();
         Events.fire(new ResetEvent());
         world.tiles = new Tiles(0, 0);
+
+        state.data.unload();
+        State prev = state.getState();
+        //recreate gamestate - sets state to menu
+        state = new GameState();
+        //fire change event, since it was technically changed
+        Events.fire(new StateChangeEvent(prev, State.menu));
 
         Core.settings.manualSave();
     }

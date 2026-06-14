@@ -13,6 +13,7 @@ import arc.util.io.*;
 import mindustry.audio.*;
 import mindustry.content.*;
 import mindustry.core.*;
+import mindustry.ctype.*;
 import mindustry.entities.*;
 import mindustry.entities.Units.*;
 import mindustry.entities.bullet.*;
@@ -314,6 +315,11 @@ public class Turret extends ReloadTurret{
             }
         }
 
+        @Nullable
+        public UnlockableContent getAmmoContent(){
+            return null;
+        }
+
         /** @return ammo as a fraction of capacity; used for direct turret control HUD */
         public float getAmmoFraction(){
             return 1f;
@@ -421,7 +427,7 @@ public class Turret extends ReloadTurret{
         }
 
         public boolean isShooting(){
-            return alwaysShooting || (isControlled() ? unit.isShooting() : logicControlled() ? logicShooting : target != null);
+            return alwaysShooting || (unit.controller() instanceof Player ? unit.isShooting() : logicControlled() ? logicShooting : target != null);
         }
 
         @Override

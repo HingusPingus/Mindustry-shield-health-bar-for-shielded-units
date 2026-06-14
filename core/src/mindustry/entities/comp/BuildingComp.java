@@ -47,7 +47,7 @@ import java.util.*;
 
 import static mindustry.Vars.*;
 
-@EntityDef(value = {Buildingc.class}, isFinal = false, genio = false, serialize = false)
+@EntityDef(value = {Buildingc.class}, excludeGroups = {"all"}, isFinal = false, genio = false, serialize = false)
 @Component(base = true, genInterface = false)
 abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, QuadTreeObject, Displayable, Sized, Senseable, Controllable, Settable{
     //region vars and initialization
@@ -459,6 +459,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     /** Sets the time scale of the building to the given intensity, unless it's above that value */
     public void applyBoost(float intensity, float duration){
+        if(!block.canOverdrive) return;
         //do not refresh time scale when getting a lower intensity
         if(intensity >= this.timeScale - 0.001f){
             timeScaleDuration = Math.max(timeScaleDuration, duration);
@@ -1236,6 +1237,9 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     /** Draw the block overlay that is shown when a cursor is over the block. */
     public void drawSelect(){
         block.drawOverlay(x, y, rotation);
+        if(status() == BlockStatus.inactiveUnitFactory){
+            block.drawPlaceText(Core.bundle.format("rules.unitfactoryactivation.objective", UI.formatTime((float)Math.max(0f, state.rules.unitActivationDelay(team) - state.tick))), tile.x, tile.y, false);
+        }
     }
 
     public void drawItemSelection(@Nullable UnlockableContent selection){
@@ -1258,6 +1262,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         Draw.reset();
     }
 
+    /** Called only if {@link Block#drawDynamic} is true (on by default). */
     public void draw(){
         if(block.variants == 0 || block.variantRegions == null){
             Draw.rect(block.region, x, y, drawrot());
@@ -1266,6 +1271,15 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         }
 
         drawTeamTop();
+    }
+
+    /** Called only if {@link Block#drawCached} is true (off by default). */
+    public void drawCached(){
+        draw();
+    }
+
+    public void recache(){
+        if(!headless) renderer.blocks.recacheBuilding(tile);
     }
 
     public void payloadDraw(){
@@ -2229,8 +2243,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     @Override
     public void update(){
 
-        //TODO refactor to timestamp-based system?
-        if((timeScaleDuration -= Time.delta) <= 0f || !block.canOverdrive){
+        //TODO refactor to separate loop?
+        if((timeScaleDuration -= Time.delta) <= 0f){
             timeScale = 1f;
         }
 
